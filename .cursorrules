@@ -1,0 +1,5 @@
+# PROTOCOLO BMAD
+- Siga as fases do diagrama Standard Greenfield.
+- P1 (Discovery) -> P2 (Planning) -> P3 (Solutioning) -> P4 (Implementation).
+- Proibido codar sem Architecture Doc e Test Design aprovados na P3.
+- Stack: Java 21, Maven, SQLite, JPA (Jakarta Persistence), Jakarta EE, Jakarta REST.

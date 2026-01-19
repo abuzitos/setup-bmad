@@ -1,0 +1,2 @@
+workflow: Standard-Greenfield
+phases: [P1_Discovery, P2_Planning, P3_Solutioning, P4_Implementation]

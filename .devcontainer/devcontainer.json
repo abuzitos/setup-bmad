@@ -1,0 +1,22 @@
+{
+	"name": "Java 21 Maven DevContainer",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21",
+	
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-maven"
+			],
+			"settings": {
+				"java.configuration.updateBuildConfiguration": "automatic"
+			}
+		}
+	},
+
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y maven && mvn --version && mvn clean install -DskipTests || true"
+}

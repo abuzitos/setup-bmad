@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Sistema de Cálculo de Médias - API REST
+  version: 1.0.0
+  description: |
+    API REST para gerenciamento de cálculo de médias acadêmicas de alunos de uma faculdade.
+    
+    ## Funcionalidades
+    
+    - Gestão de Cursos
+    - Gestão de Disciplinas (vinculadas a cursos e professores)
+    - Gestão de Alunos (matriculados em disciplinas)
+    - Gestão de Professores (que lecionam disciplinas)
+    - Registro de Notas (cada disciplina possui 2 notas por aluno)
+    - Cálculo automático de médias com classificação de aprovação
+    
+    ## Regras de Negócio
+    
+    ### Cálculo de Média
+    - Média = (Nota 1 + Nota 2) / 2
+    
+    ### Classificação
+    - **Aprovado**: Média >= 7.0
+    - **Exame**: Média >= 5.0 e < 7.0
+    - **Reprovado**: Média < 5.0
+  contact:
+    name: Equipe de Desenvolvimento
+    email: dev@faculdade.edu.br
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor de Desenvolvimento
+
+tags:
+  - name: Cursos
+    description: Operações relacionadas a cursos
+  - name: Disciplinas
+    description: Operações relacionadas a disciplinas
+  - name: Alunos
+    description: Operações relacionadas a alunos
+  - name: Professores
+    description: Operações relacionadas a professores
+  - name: Matrículas
+    description: Operações relacionadas a matrículas de alunos em disciplinas
+  - name: Notas
+    description: Operações relacionadas a notas e cálculo de médias
+
+paths:
+  /cursos:
+    get:
+      tags:
+        - Cursos
+      summary: Listar todos os cursos
+      description: Retorna uma lista de todos os cursos cadastrados
+      responses:
+        '200':
+          description: Lista de cursos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Curso'
+    post:
+      tags:
+        - Cursos
+      summary: Criar novo curso
+      description: Cria um novo curso no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CursoInput'
+      responses:
+        '201':
+          description: Curso criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Curso'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+components:
+  schemas:
+    Curso:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID único do curso
+        nome:
+          type: string
+          maxLength: 100
+          description: Nome do curso
+      required:
+        - id
+        - nome
+    
+    CursoInput:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 100
+          description: Nome do curso
+      required:
+        - nome
+    
+    Erro:
+      type: object
+      properties:
+        codigo:
+          type: string
+          description: Código do erro
+        mensagem:
+          type: string
+          description: Mensagem descritiva do erro
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp do erro
+      required:
+        - codigo
+        - mensagem
