@@ -1,15 +1,20 @@
 package com.faculdade.media.exception;
 
+import com.faculdade.media.config.TransactionFilter;
 import com.faculdade.media.dto.ErroDTO;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handler global de exceções para a API REST.
@@ -18,9 +23,15 @@ import java.util.stream.Collectors;
  */
 @Provider
 public class ExceptionHandler implements ExceptionMapper<Exception> {
+
+    @Context
+    private ContainerRequestContext requestContext;
     
     @Override
     public Response toResponse(Exception exception) {
+        if (requestContext != null) {
+            TransactionFilter.markException(requestContext);
+        }
         ErroDTO erro = new ErroDTO();
         erro.setTimestamp(LocalDateTime.now());
         
@@ -76,9 +87,16 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
                     .build();
         }
         
-        // Exceção genérica
+        // Exceção genérica - logar e incluir detalhe para diagnóstico
+        Logger.getLogger(ExceptionHandler.class.getName())
+                .log(Level.SEVERE, "Erro não mapeado na API", exception);
         erro.setCodigo("ERRO_INTERNO");
         erro.setMensagem("Erro interno do servidor. Tente novamente mais tarde.");
+        String detalhe = exception.getClass().getName() + ": " + exception.getMessage();
+        if (exception.getCause() != null) {
+            detalhe += " [Causa: " + exception.getCause().getClass().getName() + ": " + exception.getCause().getMessage() + "]";
+        }
+        erro.setDetalhe(detalhe);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(erro)
                 .build();

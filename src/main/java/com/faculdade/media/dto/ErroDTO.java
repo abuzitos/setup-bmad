@@ -16,6 +16,9 @@ public class ErroDTO {
     @Schema(description = "Mensagem descritiva do erro", example = "Nome é obrigatório")
     private String mensagem;
     
+    @Schema(description = "Detalhe técnico (apenas em modo debug)")
+    private String detalhe;
+    
     @Schema(description = "Timestamp do erro", example = "2024-01-15T10:30:00")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
@@ -46,6 +49,14 @@ public class ErroDTO {
     
     public void setMensagem(String mensagem) {
         this.mensagem = mensagem;
+    }
+    
+    public String getDetalhe() {
+        return detalhe;
+    }
+    
+    public void setDetalhe(String detalhe) {
+        this.detalhe = detalhe;
     }
     
     public LocalDateTime getTimestamp() {
