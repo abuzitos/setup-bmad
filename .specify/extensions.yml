@@ -1,0 +1,43 @@
+installed: []
+settings:
+  auto_execute_hooks: true
+hooks:
+  after_plan:
+  after_implement:
+  - extension: critique
+    command: speckit.critique.run
+    enabled: true
+    optional: true
+    prompt: Execute speckit.critique.run?
+    description: ''
+    condition: null
+  - extension: staff-review
+    command: speckit.staff-review.run
+    enabled: true
+    optional: true
+    prompt: Execute speckit.staff-review.run?
+    description: ''
+    condition: null
+  before_implement:
+  - extension: onboard
+    command: speckit.onboard.after-implement
+    enabled: true
+    optional: true
+    prompt: Execute speckit.onboard.after-implement?
+    description: ''
+    condition: null
+  after_explain:
+  - extension: onboard
+    command: speckit.onboard.before-implement
+    enabled: true
+    optional: true
+    prompt: Execute speckit.onboard.before-implement?
+    description: ''
+    condition: null
+  - extension: onboard
+    command: speckit.onboard.after-explain
+    enabled: true
+    optional: true
+    prompt: Execute speckit.onboard.after-explain?
+    description: ''
+    condition: null

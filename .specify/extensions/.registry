@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "extensions": {
+    "critique": {
+      "version": "1.0.0",
+      "source": "bundled",
+      "manifest_hash": "sha256:0b63a1835415df730cbd487c90c1252b294980176c10c14a3fa9c31a7cb882e0",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "cursor": [
+          "speckit.critique.run"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-04-13T21:55:46.654146+00:00"
+    },
+    "onboard": {
+      "version": "2.1.0",
+      "source": "bundled",
+      "manifest_hash": "sha256:8220058d725718da973dd45967a7403a03d0c6d815f25c2e80626b5428ae8f2f",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "cursor": [
+          "speckit.onboard.start",
+          "speckit.onboard.explain",
+          "speckit.onboard.trail",
+          "speckit.onboard.quiz",
+          "speckit.onboard.badge",
+          "speckit.onboard.mentor",
+          "speckit.onboard.team"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-04-13T21:55:46.657693+00:00"
+    },
+    "security-review": {
+      "version": "1.1.0",
+      "source": "bundled",
+      "manifest_hash": "sha256:549840c2a584f4a18bbb1e4cf8b3ad330011f41464c0d9d6063ee148f87f9d8f",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "cursor": [
+          "speckit.security-review.audit",
+          "speckit.security-review.staged",
+          "speckit.security-review.branch"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-04-13T21:55:46.662564+00:00"
+    },
+    "staff-review": {
+      "version": "1.0.0",
+      "source": "bundled",
+      "manifest_hash": "sha256:320fa967c40ae943e37ceb0a1fb0f8dda42eb22b07be8428674ce72532e28e1e",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "cursor": [
+          "speckit.staff-review.run"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-04-13T21:55:46.664544+00:00"
+    }
+  }
+}

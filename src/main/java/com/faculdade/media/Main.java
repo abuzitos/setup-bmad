@@ -21,7 +21,7 @@ public class Main {
 
             System.out.println("Sistema de Cálculo de Médias iniciado.");
             System.out.println("API REST disponível em: http://localhost:8080/api");
-            System.out.println("Swagger UI: http://localhost:8080/swagger-ui");
+            System.out.println("Swagger UI: http://localhost:8080/api/swagger-ui");
             System.out.println("Pressione Ctrl+C para encerrar.");
 
             Thread.currentThread().join();

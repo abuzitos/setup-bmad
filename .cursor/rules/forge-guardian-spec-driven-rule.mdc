@@ -1,0 +1,165 @@
+---
+description: "Guardian rule: enforces spec-driven development. Detects branch context, checks for specs, and redirects to SpecKit planning flow when specs are missing."
+alwaysApply: true
+---
+
+# Guardian: Spec-Driven Development
+
+You MUST follow this rule at ALL times. It enforces spec-driven development.
+
+## Session Start — Proactive Check
+
+At the START of every conversation, BEFORE any other action:
+
+1. Run `git branch --show-current` to detect the current branch
+2. Evaluate the branch against the rules below
+3. Present a status summary to the user
+
+## Branch Detection
+
+Determine the work type from the branch name:
+
+| Branch prefix | Type | Spec required? |
+|--------------|------|----------------|
+| `feature/` or `feat/` | FEATURE | YES — full flow (PRD + SpecKit) |
+| `bugfix/` or `fix/` | BUG-FIX | YES — simplified flow (SpecKit only) |
+| `hotfix/` | HOTFIX | YES — minimal flow (SpecKit, skip plan) |
+| `release/` | RELEASE | NO — exempt |
+| `docs/` | DOCS | NO — exempt |
+| `chore/` | CHORE | NO — exempt |
+| `main`, `master`, `develop` | NO WORK BRANCH | Redirect to branch creation |
+| detached HEAD | NO WORK BRANCH | Redirect to branch creation |
+| other | UNKNOWN | Ask user for work type |
+
+### If no work branch (main/master/develop/detached HEAD)
+
+Present to the user:
+
+```
+You are on `{branch}`, which is not a work branch.
+
+What type of work are you starting?
+1. Feature — new functionality
+2. Bug-fix — fix a known bug
+3. Hotfix — urgent production fix
+4. Release / Docs / Chore — no spec required
+```
+
+After the user responds:
+- Ask for a ticket ID (optional but recommended)
+- Ask for a short description
+- Redirect to: `/speckit.specify {description} --prefix {type} --ticket {ticket-id}`
+- Do NOT create the branch yourself — `/speckit.specify` handles branch creation.
+
+## Spec Detection
+
+Extract the slug from the branch name (everything after `{prefix}/`):
+- Branch `feature/PROJ-123-user-auth` → slug = `PROJ-123-user-auth`
+- Branch `bugfix/login-timeout` → slug = `login-timeout`
+
+Search for spec directory:
+- Look in `specs/` for a directory matching `*{slug}*` or `*{ticket-id}*`
+- Ticket-id match takes priority over description match
+- Also check legacy convention: `specs/NNN-{slug}*/`
+
+### Phase Detection
+
+If a spec directory is found, check which phase is complete:
+
+| File exists | Phase completed |
+|------------|----------------|
+| `spec.md` | specify done |
+| `plan.md` | plan done |
+| `tasks.md` | tasks done — ready to implement |
+
+Redirect to the NEXT incomplete phase:
+- No `spec.md` → redirect to `/speckit.specify`
+- Has `spec.md` but no `plan.md` → redirect to `/speckit.plan`
+- Has `plan.md` but no `tasks.md` → redirect to `/speckit.tasks`
+- Has all three → ALLOW implementation
+
+## Routing by Work Type
+
+### FEATURE (full flow)
+
+1. Check PRD: search `docs/prd-*{slug}*.md` or `docs/prd-*{ticket-id}*.md`
+   - If PRD missing: guide user to create it (problem, objective, acceptance criteria, non-goals)
+   - If PRD incomplete: list missing sections, ask to complete
+2. Check spec (see Phase Detection above)
+3. If spec complete (has spec.md + plan.md + tasks.md): ALLOW implementation
+
+### BUG-FIX (simplified flow — no PRD required)
+
+1. Check spec (see Phase Detection above)
+2. If no spec: redirect to `/speckit.specify` with template guidance:
+   - Symptom/problem observed
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Impact (users, severity)
+3. If spec exists: check plan.md and tasks.md phases
+4. If spec complete (has spec.md + plan.md + tasks.md): ALLOW implementation
+
+### HOTFIX (minimal flow — no PRD, no plan required)
+
+1. Check spec (see Phase Detection above)
+2. If no spec: redirect to `/speckit.specify` with minimal template:
+   - Production incident/symptom
+   - Immediate impact
+   - Proposed fix
+3. Skip plan — redirect directly to `/speckit.tasks`
+4. If spec complete (has spec.md + tasks.md): ALLOW implementation
+
+### EXEMPT BRANCHES (release, docs, chore)
+
+No spec required. Do NOT intercept any actions.
+
+## Interception Rules
+
+### Protected directories (require spec before editing)
+
+`src/`, `lib/`, `app/`, `tests/`, `scripts/`
+
+### Free directories (always editable)
+
+`docs/`, `specs/`, `*.md` files at repository root
+
+### When a user tries to edit a protected file WITHOUT a complete spec:
+
+REFUSE the edit and show:
+
+```
+Guardian: implementation blocked
+Reason: spec not found for {branch}
+
+To unblock:
+1. /speckit.specify → create specification
+2. /speckit.plan → generate plan
+3. /speckit.tasks → generate tasks
+
+Start planning now? (y/n)
+```
+
+If the user says yes, redirect to the appropriate `/speckit.*` command for the current phase.
+
+### When a user invokes an implementation skill WITHOUT a complete spec:
+
+Skills blocked: `/speckit.implement`, `implement-feature`, `refactor-function`, and similar implementation skills.
+
+Same behavior: REFUSE, show status, redirect to planning.
+
+### Re-evaluation
+
+Re-evaluate branch and spec status on EVERY intercepted action, not just at session start.
+This handles mid-session branch switches.
+
+## Status Display Format
+
+When showing status (at session start or on interception):
+
+```
+Guardian: branch {branch_name}
+├── Type: {FEATURE|BUG-FIX|HOTFIX|EXEMPT}
+├── PRD: {OK path | NOT FOUND} (features only)
+├── Spec: {OK path | NOT FOUND | PARTIAL (has spec.md, missing plan.md)}
+└── Next: {action to take}
+```

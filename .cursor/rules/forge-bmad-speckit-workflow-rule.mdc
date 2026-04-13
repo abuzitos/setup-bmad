@@ -1,0 +1,81 @@
+---
+description: Visão geral do workflow BMad + Spec Kit. Aplica quando o usuário inicia um projeto, pergunta sobre processo ou menciona Discovery, Planning, PRD, HLD ou Spec Kit.
+globs:
+  - "**/*.md"
+  - "**/.specify"
+  - "**/specs/**"
+  - "**/docs/prd*"
+  - "**/docs/hld*"
+alwaysApply: false
+---
+
+# BMad + Spec Kit Workflow
+
+## Visão Geral
+
+O fluxo **BMad + Spec Kit** divide o desenvolvimento em duas fases complementares:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  FASE 1 — BMad (Discovery & Planning)               │
+│  Owner: PM + Arquiteto                              │
+│                                                     │
+│  Discovery → PRD → HLD → Aprovação                 │
+└─────────────────────────────────────────────────────┘
+                        │
+                        ▼ Handoff (artefatos obrigatórios)
+┌─────────────────────────────────────────────────────┐
+│  FASE 2 — Spec Kit (Especificação & Implementação)  │
+│  Owner: Dev + QA                                    │
+│                                                     │
+│  /speckit.specify → specs/ → Implementação → Review │
+└─────────────────────────────────────────────────────┘
+```
+
+## Fases e Artefatos
+
+| Fase | Responsável | Artefatos Produzidos | Critério de Saída |
+|------|-------------|---------------------|-------------------|
+| Discovery | PM | Notas de entrevista, problem statement | Problem statement aprovado |
+| PRD | PM | `docs/prd-<feature>.md` | PRD aprovado pelo stakeholder |
+| HLD | PM + Arquiteto | `docs/hld-<feature>.md` | HLD aprovado pelo Tech Lead |
+| Spec Kit | Dev | `specs/<feature>/` | Specs revisadas e aceitas |
+| Implementação | Dev | Código, testes | PR aberto e passando em CI |
+| Review | QA + Peers | Comentários de PR | PR aprovado e merged |
+
+## Artefatos Obrigatórios para Handoff BMad → Spec Kit
+
+Antes de executar `/speckit.specify` para features, o seguinte arquivo DEVE existir:
+
+- `docs/prd-<feature>.md` — Product Requirements Document completo
+
+**Nota:** O HLD é gerado como output do `/speckit.plan`, não como pré-requisito.
+Para bug-fixes e hotfixes, o `/speckit.specify` pode ser executado diretamente com template simplificado.
+
+## Gates de Qualidade
+
+1. **Discovery → PRD**: Problem statement deve ser aprovado explicitamente
+2. **PRD → HLD**: PRD deve conter critérios de aceite claros e não-goals
+3. **HLD → Spec Kit**: HLD deve ser aprovado pelo Tech Lead
+4. **Spec Kit → Implementação**: Specs devem ser revisadas pelo Dev responsável
+5. **Implementação → Merge**: CI deve estar verde; review obrigatório
+
+## Como Usar no Cursor
+
+```
+# Iniciar Discovery
+"Conduza o Discovery para o problema: [descrição]"
+
+# Criar PRD
+"Crie o PRD em docs/prd-<feature>.md seguindo o template"
+
+# Após PRD e HLD aprovados, iniciar Spec Kit
+/speckit.specify --prd docs/prd-<feature>.md --hld docs/hld-<feature>.md
+```
+
+## Referências
+
+- `QUICKSTART.md` — Guia passo-a-passo
+- `docs/bmad-speckit/flow-overview.md` — Diagrama completo
+- `docs/bmad-speckit/roles-and-responsibilities.md` — Papéis detalhados
+- `templates/prd-to-spec-guide.md` — Como transformar PRD em input Spec Kit

@@ -1,0 +1,54 @@
+---
+description: "Apply when implementing a feature from ticket to PR. Guides the agent through analysis, implementation, testing, and review steps."
+alwaysApply: false
+---
+
+# Feature Delivery
+
+When implementing a feature from a ticket:
+
+## Pre-requisites (enforced by guardian rule)
+1. A spec MUST exist in `specs/` for this feature before implementation starts
+2. Run `/speckit.specify` to create the spec if it doesn't exist
+3. Run `/speckit.plan` and `/speckit.tasks` to complete the planning cycle
+4. Features also require a PRD in `docs/prd-<feature>.md`
+
+## Before starting
+1. Read the ticket and all acceptance criteria completely
+2. Identify all files that need to change — read them before modifying
+3. Estimate scope: local (1-3 files) or cross-cutting (5+ files)
+4. If scope is larger than expected, flag before starting
+
+## Implementation
+1. Branch should already exist (created by `/speckit.specify`): `feature/{{ticket_id}}-{{slug}}`
+2. Read all relevant files before modifying any
+3. Implement exactly what acceptance criteria require — no more, no less
+4. If existing code needs refactoring, use the `refactor-function` skill
+5. Write unit tests for all new logic
+6. Never commit with failing tests
+
+## Testing validation
+1. Verify all acceptance criteria are met
+2. Check edge cases: null, empty, boundary values
+3. Check error cases: API down, timeout, invalid input
+4. All tests (new and existing) must pass
+
+## PR preparation
+1. Self-review every changed line
+2. Remove debug code, commented-out code, and TODOs
+3. Rebase on latest base branch
+4. Write PR description: what changed, why, how to test
+
+## Code review
+1. Classify all findings: Blocker / Major / Minor / Suggestion
+2. Blockers and Majors must be resolved before merge
+3. Minors and Suggestions are at the engineer's discretion
+
+## Agents involved
+- Engineer: `agents/dev/senior-engineer.md` — implementation and tests
+- QA: `agents/qa/test-engineer.md` — test validation
+- Reviewer: `agents/ops/code-reviewer.md` — code review
+
+## Skills used
+- `skills/code/refactor-function/SKILL.md` — if refactoring is needed
+- `skills/analysis/review-pr/SKILL.md` — for structured code review

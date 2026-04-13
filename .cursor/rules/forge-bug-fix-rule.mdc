@@ -1,0 +1,55 @@
+---
+description: "Apply when fixing a bug. Guides through reproduction, diagnosis, test-first fix, review, and verification."
+alwaysApply: false
+---
+
+# Bug Fix
+
+When fixing a bug:
+
+## Pre-requisites (enforced by guardian rule)
+1. A minimal spec MUST exist in `specs/` for this bug before fixing
+2. Run `/speckit.specify` to create the spec with: symptom, reproduction steps, expected vs actual behavior, impact
+3. Run `/speckit.plan` and `/speckit.tasks` to plan the fix
+
+## Reproduce first
+1. Read the bug report: symptom, expected behavior, reproduction steps
+2. Reproduce the bug locally — confirm you see the same symptom
+3. If not reproducible: check environment differences, request more context
+4. Do NOT start fixing until you can reliably reproduce the bug
+
+## Diagnose root cause
+1. Formulate 2-5 hypotheses for the root cause
+2. Read the code in the area where the bug manifests
+3. Check recent changes: `git log --oneline -20 -- <affected files>`
+4. Test each hypothesis with evidence — identify the root cause, not the symptom
+5. Use `skills/code/debug-issue/SKILL.md` for systematic debugging
+
+## Fix with test first
+1. Branch should already exist (created by `/speckit.specify`): `bugfix/{{ticket_id}}-{{slug}}`
+2. Write a test that reproduces the bug — it MUST FAIL before the fix
+3. Implement the minimal fix that addresses the root cause
+4. Run the failing test — it must now PASS
+5. Run all existing tests — none must break
+6. If fix reveals code needing refactoring: use `skills/code/refactor-function/SKILL.md` in a separate commit
+
+## Test validation
+1. Review the regression test: does it actually test the reported bug?
+2. Identify edge cases: similar inputs, adjacent code paths
+3. Use `skills/code/write-unit-tests/SKILL.md` for comprehensive test coverage
+
+## Code review
+1. Use `skills/analysis/review-pr/SKILL.md` to structure the review
+2. Verify the fix addresses the documented root cause
+3. Check the fix doesn't introduce new issues
+4. Verify the regression test is meaningful
+
+## Merge and close
+1. Merge to base branch after approval
+2. Update ticket with: root cause, fix summary, PR link
+3. If production bug: verify fix in staging/production after deploy
+
+## Agents involved
+- Engineer: `agents/dev/senior-engineer.md` — diagnosis, fix, regression test
+- QA: `agents/qa/test-engineer.md` — test validation
+- Reviewer: `agents/ops/code-reviewer.md` — code review

@@ -1,6 +1,8 @@
 package com.faculdade.media.config;
 
 import com.faculdade.media.service.AlunoService;
+import com.faculdade.media.service.AuthService;
+import com.faculdade.media.service.AuthServiceMock;
 import com.faculdade.media.service.CursoService;
 import com.faculdade.media.service.DisciplinaService;
 import com.faculdade.media.service.MatriculaService;
@@ -29,7 +31,8 @@ public class JerseyConfig extends ResourceConfig {
         // Registrar configuração OpenAPI
         register(OpenAPIConfig.class);
         
-        // Registrar filtro de transação e providers
+        // Registrar filtros (ordem importa: auth antes de transação)
+        register(AuthenticationFilter.class);
         register(TransactionFilter.class);
         
         // Bindings HK2 para EntityManager e Services
@@ -46,6 +49,7 @@ public class JerseyConfig extends ResourceConfig {
                 bind(AlunoService.class).to(AlunoService.class);
                 bind(ProfessorService.class).to(ProfessorService.class);
                 bind(MatriculaService.class).to(MatriculaService.class);
+                bind(AuthServiceMock.class).to(AuthService.class);
             }
         });
         

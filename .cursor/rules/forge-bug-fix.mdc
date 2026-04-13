@@ -1,0 +1,161 @@
+---
+description: "Bug fix workflow from report to verified resolution with regression test and code review."
+alwaysApply: false
+---
+
+# Workflow: Bug Fix
+
+Structured process to fix a bug from report to verified resolution, with tests and code review.
+
+## Trigger
+
+Bug reported or identified, defined as any of the following:
+- User-reported issue with reproduction steps
+- Failing test in CI that previously passed
+- Error spike detected in monitoring/logs
+- Bug found during code review or feature implementation
+
+## Roles
+
+| Role | Agent | Responsibility in this workflow |
+|------|-------|--------------------------------|
+| Engineer | [../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md) | Diagnosis, fix, and regression test |
+| QA | [../agents/qa/test-engineer.md](../agents/qa/test-engineer.md) | Test validation and edge case coverage |
+| Reviewer | [../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md) | Code review of the fix |
+
+## Skills Used
+
+| Skill | When to use |
+|-------|-------------|
+| [../skills/code/debug-issue/SKILL.md](../skills/code/debug-issue/SKILL.md) | In Step 1 and Step 2 — systematic debugging process |
+| [../skills/code/write-unit-tests/SKILL.md](../skills/code/write-unit-tests/SKILL.md) | In Step 3 — writing the regression test |
+| [../skills/analysis/review-pr/SKILL.md](../skills/analysis/review-pr/SKILL.md) | In Step 5 — structured code review |
+| [../skills/code/refactor-function/SKILL.md](../skills/code/refactor-function/SKILL.md) | In Step 3 — if the fix reveals code that needs refactoring |
+
+## Steps
+
+### Step 1 — Reproduce the Bug (Engineer)
+
+**Responsible**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Actions:
+1. Read the bug report: symptom, expected behavior, reproduction steps
+2. Reproduce the bug locally — confirm you see the same symptom
+3. If not reproducible: check environment differences, request more context
+4. Document the exact reproduction steps (even if different from the report)
+
+**Rule**: do not start fixing until you can reliably reproduce the bug.
+
+**Output**: confirmed reproduction steps + observed symptom
+
+---
+
+### Step 2 — Diagnose Root Cause (Engineer)
+
+**Responsible**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Actions:
+1. Follow the `debug-issue` skill: formulate hypotheses, test each one
+2. Read the code in the area where the bug manifests
+3. Check recent changes: `git log --oneline -20 -- <affected files>`
+4. Identify the root cause — not just the symptom
+5. Document the root cause with evidence
+
+**Output**: root cause identified with evidence (log output, code reference, commit hash)
+
+---
+
+### Step 3 — Fix and Write Regression Test (Engineer)
+
+**Responsible**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Actions:
+1. Create a branch: `fix/{{ticket_id}}-{{slug}}`
+2. Write a test that reproduces the bug — it must FAIL before the fix
+3. Implement the minimal fix that addresses the root cause
+4. Run the failing test — it must now PASS
+5. Run all existing tests — none must break
+6. If the fix reveals code that should be refactored: use `refactor-function` skill (but keep the refactor in a separate commit)
+
+**Rule**: test first, fix second. The test proves the bug exists and guards against regression.
+
+**Output**: branch with fix + regression test, all tests passing
+
+---
+
+### Step 4 — Test Validation (QA)
+
+**Responsible**: QA ([../agents/qa/test-engineer.md](../agents/qa/test-engineer.md))
+
+Actions:
+1. Review the regression test: does it actually test the reported bug?
+2. Identify edge cases not covered by the Engineer's test:
+   - Similar inputs that might trigger the same bug
+   - Adjacent code paths that might have the same issue
+3. Add additional tests if gaps are found
+4. Confirm all tests pass
+
+**Output**: test coverage validated, edge cases covered
+
+---
+
+### Step 5 — Code Review (Reviewer)
+
+**Responsible**: Reviewer ([../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md))
+
+Actions:
+1. Use the `review-pr` skill to structure the review
+2. Verify the fix addresses the documented root cause
+3. Check that the fix doesn't introduce new issues (regressions, security, performance)
+4. Verify the regression test is meaningful (not just testing happy path)
+5. Decide: Approve / Request Changes
+
+If **Request Changes**:
+- Engineer addresses feedback and requests re-review
+- Cycle until approved
+
+**Output**: PR approved
+
+---
+
+### Step 6 — Merge and Close (Engineer)
+
+**Responsible**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Actions:
+1. PR approved → merge to base branch
+2. Delete the fix branch after merge
+3. Update the bug ticket to **Done** with:
+   - Root cause description
+   - Fix summary
+   - PR link
+4. If the bug was in production: verify the fix in staging/production after deploy
+
+**Output**: fix merged, ticket closed, production verified (if applicable)
+
+## Exit Criteria
+
+The workflow is complete when ALL of the following are true:
+- [ ] Root cause identified and documented in the ticket
+- [ ] Regression test exists and passes
+- [ ] Fix merged to base branch
+- [ ] All tests passing in CI after merge
+- [ ] Bug ticket updated to "Done" with root cause and PR link
+- [ ] Production verified (if the bug was in production)
+
+## Artifacts
+
+| Artifact | Format | Location |
+|----------|--------|----------|
+| Fix branch | Git branch | `fix/{{ticket_id}}-{{slug}}` |
+| Regression test | Test file in project test directory | `tests/` or alongside the module |
+| Pull Request | PR in repository | Link in ticket |
+| Code Review | Comments on PR | GitHub/GitLab PR |
+| Root cause documentation | Comment on ticket | Bug ticket |
+
+## Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{{ticket_id}}` | Bug ticket ID | `BUG-567` |
+| `{{slug}}` | Short description slug | `certificate-not-found` |

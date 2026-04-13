@@ -1,0 +1,99 @@
+---
+description: Constitution corporativa base com padrões de qualidade, stack tecnológico e rastreabilidade. Sempre aplicada como linha de base para todos os projetos.
+globs:
+  - "**/constitution.md"
+alwaysApply: true
+---
+
+# Constitution Base — Certisign Engineering
+
+## Padrões de Qualidade
+
+### Código
+
+- **Cobertura de testes**: mínimo 80% para código novo em produção
+- **Complexidade ciclomática**: máximo 10 por função
+- **Tamanho de funções**: máximo 50 linhas (exceto casos documentados)
+- **Sem dead code**: código não utilizado deve ser removido, não comentado
+- **Sem TODOs em produção**: TODOs devem virar tickets antes do merge
+
+### Revisão
+
+- **Toda mudança em produção** requer ao menos 1 aprovação de peer
+- **Mudanças críticas** (auth, pagamentos, dados sensíveis) requerem 2 aprovações
+- **CI obrigatório**: nenhum merge sem CI verde
+
+### Documentação
+
+- **ADRs obrigatórios** para decisões arquiteturais relevantes (use `skills/docs/write-adr.md`)
+- **Changelog**: toda versão publicada deve ter changelog
+- **Design Decisions**: divergências de plano devem ser registradas em `docs/design-decisions.md`
+
+---
+
+## Stack Tecnológico Padrão
+
+### Backend
+- **Linguagem**: TypeScript (Node.js) ou Python 3.11+
+- **Framework**: NestJS (TS) ou FastAPI (Python)
+- **ORM**: TypeORM (TS) ou SQLAlchemy (Python)
+- **Banco de dados**: PostgreSQL (primário), Redis (cache/sessões)
+
+### Frontend
+- **Framework**: Next.js 14+ (App Router)
+- **Linguagem**: TypeScript
+- **Estilo**: Tailwind CSS
+- **Estado**: Zustand ou TanStack Query
+
+### Infraestrutura
+- **Containers**: Docker + Docker Compose (dev), Kubernetes (prod)
+- **CI/CD**: GitHub Actions
+- **Observabilidade**: OpenTelemetry → Datadog/Grafana
+
+### Segurança
+- **Autenticação**: OAuth 2.0 / OIDC (Keycloak ou Cognito)
+- **Secrets**: HashiCorp Vault ou AWS Secrets Manager
+- **Scanning**: Dependabot + SAST no CI
+
+---
+
+## Rastreabilidade Obrigatória
+
+Todo artefato de código deve ser rastreável ao seu ticket de origem:
+
+| Artefato | Rastreabilidade Exigida |
+|---------|------------------------|
+| Commit | Mensagem com `[TICKET-XXX]` no início |
+| PR | Título com `[TICKET-XXX]` e link ao ticket |
+| ADR | Referência ao ticket que motivou a decisão |
+| Spec | Link ao PRD e HLD que a originou |
+
+**Formato de commit obrigatório:**
+```
+[TICKET-XXX] tipo: descrição curta em imperativo
+
+Corpo opcional explicando o "porquê", não o "o quê".
+```
+
+Tipos válidos: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `ci`
+
+---
+
+## Princípios de Engenharia
+
+1. **Simplicidade primeiro**: a solução mais simples que funciona é a correta
+2. **Explícito > Implícito**: prefira código verboso e claro a magic/clever code
+3. **Fail fast**: valide entradas nas bordas do sistema; confie no código interno
+4. **Observabilidade por design**: logs, métricas e traces desde o início
+5. **Segurança por design**: não adicione segurança como afterthought
+
+---
+
+## Divergências e Exceções
+
+Qualquer desvio desta constitution deve ser:
+1. Discutido com o Tech Lead
+2. Registrado em `docs/design-decisions.md` com justificativa
+3. Revisado em retrospectiva
+
+Desvios não documentados são tratados como violações a serem corrigidas.

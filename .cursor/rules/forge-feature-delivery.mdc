@@ -1,0 +1,153 @@
+---
+description: "Workflow de entrega de features. Composicao multi-step de agents e skills."
+alwaysApply: false
+---
+
+# Workflow: Feature Delivery
+
+Entrega de uma feature do ticket ao PR aprovado, com testes e code review.
+
+## Trigger
+
+Ticket no estado **Ready for Development** com:
+- Critérios de aceite definidos e aprovados pelo PM
+- Design (se aplicável) aprovado
+- Dependências técnicas identificadas e desbloqueadas
+
+## Roles
+
+| Role | Agent | Responsabilidade neste workflow |
+|------|-------|--------------------------------|
+| Engineer | [../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md) | Implementação e testes unitários |
+| QA | [../agents/qa/test-engineer.md](../agents/qa/test-engineer.md) | Validação de cobertura de testes |
+| Reviewer | [../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md) | Code review e aprovação do PR |
+
+## Skills Usadas
+
+| Skill | Quando usar |
+|-------|-------------|
+| [../skills/code/refactor-function/SKILL.md](../skills/code/refactor-function/SKILL.md) | Se a implementação exigir refatoração de código existente |
+| [../skills/analysis/review-pr/SKILL.md](../skills/analysis/review-pr/SKILL.md) | No Step 4 (Code Review) |
+
+## Steps
+
+### Step 1 — Análise do Ticket (Engineer)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Ações:
+1. Leia o ticket completo e os critérios de aceite
+2. Identifique os arquivos que precisarão ser modificados
+3. Estime o escopo: é uma mudança local ou afeta múltiplos módulos?
+4. Se o escopo for maior que esperado, comunique ao PM antes de começar
+
+**Output do step**: lista de arquivos a modificar + escopo confirmado
+
+---
+
+### Step 2 — Implementação (Engineer)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Ações:
+1. Crie uma branch: `feature/{{ticket_id}}-{{slug}}`
+2. Leia todos os arquivos relevantes antes de modificar qualquer um
+3. Implemente seguindo os critérios de aceite — nem mais, nem menos
+4. Se algum código existente precisar de refatoração: use [../skills/code/refactor-function/SKILL.md](../skills/code/refactor-function/SKILL.md)
+5. Escreva testes unitários para a lógica nova
+6. Confirme que todos os testes (novos e existentes) passam
+
+**Regra**: nenhum commit com testes quebrando.
+
+**Output do step**: branch com implementação + testes passando
+
+---
+
+### Step 3 — Validação de Testes (QA)
+
+**Responsável**: QA ([../agents/qa/test-engineer.md](../agents/qa/test-engineer.md))
+
+Ações:
+1. Leia os critérios de aceite do ticket
+2. Identifique casos não cobertos pelos testes do Engineer:
+   - Edge cases (null, vazio, limite de tamanho)
+   - Casos de erro (API down, timeout, input inválido)
+   - Casos de concorrência (se aplicável)
+3. Adicione os testes ausentes na mesma branch
+4. Confirme que todos os testes passam
+
+**Output do step**: testes adicionados, cobertura dos critérios de aceite confirmada
+
+---
+
+### Step 4 — Abertura de PR (Engineer)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Ações:
+1. Abra o PR com:
+   - Título: `[{{ticket_id}}] {{título_da_feature}}`
+   - Descrição: o que foi feito, o que mudou, como testar
+   - Link para o ticket
+   - Checklist de auto-review concluída
+2. Atribua o PR ao Reviewer
+
+**Output do step**: PR aberto e atribuído
+
+---
+
+### Step 5 — Code Review (Reviewer)
+
+**Responsável**: Reviewer ([../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md))
+
+Ações:
+1. Use a skill [../skills/analysis/review-pr/SKILL.md](../skills/analysis/review-pr/SKILL.md) para estruturar o review
+2. Classifique cada comentário com tier (Blocker / Major / Minor / Suggestion)
+3. Decida: Approve / Request Changes / Reject
+
+Se **Request Changes**:
+- Engineer corrige Blockers e Majors
+- Minors e Suggestions: a critério do Engineer
+- Engineer solicita novo review após correções
+
+**Output do step**: PR aprovado ou ciclo de correções concluído
+
+---
+
+### Step 6 — Merge e Fechamento (Engineer)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Ações:
+1. PR aprovado → merge na branch base
+2. Delete a branch feature após o merge
+3. Atualize o ticket para **Done**
+4. Notifique o PM se houver escopo que ficou de fora (registre como novo ticket)
+
+**Output do step**: código em produção, ticket fechado
+
+## Exit Criteria
+
+O workflow está concluído quando TODOS os seguintes são verdadeiros:
+- [ ] PR mergeado na branch base
+- [ ] Todos os testes passando no CI após o merge
+- [ ] Ticket atualizado para estado "Done"
+- [ ] Nenhum Blocker ou Major aberto sem resolução documentada
+
+## Artifacts
+
+| Artefato | Formato | Localização |
+|----------|---------|-------------|
+| Branch feature | Git branch | `feature/{{ticket_id}}-{{slug}}` |
+| Testes unitários | Arquivos de teste no padrão do projeto | `tests/` ou ao lado do módulo |
+| Pull Request | PR no repositório | Link no ticket |
+| Code Review | Comentários no PR | GitHub/GitLab PR |
+| Ticket fechado | Estado "Done" no board | ID: {{ticket_id}} |
+
+## Variáveis
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{ticket_id}}` | ID do ticket | `ENG-1234` |
+| `{{slug}}` | Slug descritivo da feature | `add-payment-retry` |
+| `{{título_da_feature}}` | Título curto | `Add payment retry logic` |

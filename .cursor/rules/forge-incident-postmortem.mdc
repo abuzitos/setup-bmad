@@ -1,0 +1,207 @@
+---
+description: "Workflow de postmortem de incidentes. Investigacao e documentacao de incidentes."
+alwaysApply: false
+---
+
+# Workflow: Incident Postmortem
+
+Resposta estruturada a incidentes de produção: do alerta ao registro de decisões e action items.
+
+## Trigger
+
+Incidente de produção confirmado, definido como qualquer um dos seguintes:
+- Serviço indisponível por mais de 5 minutos
+- Degradação de performance afetando >10% dos usuários
+- Data corruption detectada
+- Violação de SLA confirmada pelo time de operações
+
+## Roles
+
+| Role | Agent | Responsabilidade neste workflow |
+|------|-------|--------------------------------|
+| Incident Commander | [../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md) | Coordenação da resposta e comunicação |
+| Engineer | [../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md) | Diagnóstico técnico e remediação |
+| QA | [../agents/qa/test-engineer.md](../agents/qa/test-engineer.md) | Validação da correção e testes de regressão |
+
+## Skills Usadas
+
+| Skill | Quando usar |
+|-------|-------------|
+| [../skills/analysis/review-pr/SKILL.md](../skills/analysis/review-pr/SKILL.md) | No Step 4, para revisar o hotfix antes do deploy |
+| [../skills/docs/write-adr/SKILL.md](../skills/docs/write-adr/SKILL.md) | No Step 5, para documentar decisões arquiteturais reveladas pelo incidente |
+| [../skills/code/refactor-function/SKILL.md](../skills/code/refactor-function/SKILL.md) | No Step 6, se o root cause exigir refatoração como action item |
+
+## Steps
+
+### Step 1 — Detecção e Declaração (Incident Commander)
+
+**Responsável**: Incident Commander ([../agents/ops/code-reviewer.md](../agents/ops/code-reviewer.md))
+
+Ações:
+1. Confirme que o incidente é real (não falso positivo)
+2. Declare o incidente com: severidade (P1/P2/P3), sistema afetado, impacto estimado
+3. Abra o canal de incidente (Slack, war room, etc.)
+4. Notifique stakeholders conforme severidade:
+   - P1: CTO + time de produto imediatamente
+   - P2: Tech lead + PM em até 15 minutos
+   - P3: Tech lead em até 1 hora
+5. Registre o horário de início do incidente
+
+**Output do step**: incidente declarado, stakeholders notificados, canal aberto
+
+---
+
+### Step 2 — Diagnóstico (Engineer)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md))
+
+Ações:
+1. Identifique o sintoma: o que está falhando? (logs, métricas, traces)
+2. Isole o escopo: qual serviço, qual endpoint, qual percentual de usuários?
+3. Identifique quando começou: correlacione com deploys recentes, mudanças de config, picos de tráfego
+4. Formule hipóteses de root cause (mínimo 2, máximo 5)
+5. Teste cada hipótese em ordem de probabilidade
+
+**Output do step**: hipótese de root cause confirmada, evidências coletadas
+
+---
+
+### Step 3 — Remediação Imediata (Engineer + Incident Commander)
+
+**Responsável**: Engineer + Incident Commander
+
+Ações:
+1. Se possível: aplique remediação rápida (rollback, feature flag, roteamento de tráfego)
+2. Documente a remediação aplicada no canal do incidente
+3. Confirme que os sintomas cessaram (monitore por mínimo 5 minutos após remediação)
+4. Se rollback: identifique o commit/deploy que causou o incidente
+5. Atualize o status para os stakeholders: "Incidente mitigado, investigação em andamento"
+
+**Output do step**: serviço estabilizado, remediação documentada
+
+---
+
+### Step 4 — Hotfix (se necessário) (Engineer + QA)
+
+**Responsável**: Engineer ([../agents/dev/senior-engineer.md](../agents/dev/senior-engineer.md)) + QA ([../agents/qa/test-engineer.md](../agents/qa/test-engineer.md))
+
+**Quando**: se a remediação do Step 3 foi temporária (rollback) e o root cause exige correção de código.
+
+Ações:
+1. Engineer: implemente o hotfix na branch `hotfix/{{incident_id}}`
+2. QA: escreva testes que reproduzem o bug (deve falhar antes do fix, passar depois)
+3. Reviewer: use [../skills/analysis/review-pr/SKILL.md](../skills/analysis/review-pr/SKILL.md) com foco em Blockers
+4. Engineer: merge e deploy em staging → produção com rollout gradual
+5. Monitore por 30 minutos após deploy em produção
+
+**Output do step**: hotfix em produção, bug não reproduzível
+
+---
+
+### Step 5 — Postmortem (Todos)
+
+**Responsável**: Incident Commander coordena, todos contribuem
+
+**Quando**: até 48 horas após a resolução do incidente.
+
+Ações:
+1. Crie o documento de postmortem em `docs/postmortems/{{incident_id}}.md`
+2. Preencha a timeline completa de eventos (detecção → resolução)
+3. Identifique o root cause definitivo (não o sintoma)
+4. Identifique contributing factors (o que permitiu que o root cause causasse o incidente)
+5. Liste action items concretos para prevenir recorrência
+6. Se a decisão arquitetural que causou o incidente precisar ser registrada: use [../skills/docs/write-adr/SKILL.md](../skills/docs/write-adr/SKILL.md)
+
+**Regra de postmortem**: blameless. O sistema falhou, não as pessoas.
+
+**Output do step**: documento de postmortem completo, action items com owners e prazo
+
+---
+
+### Step 6 — Action Items (Engineer)
+
+**Responsável**: Engineer(s) designados nos action items
+
+Ações:
+1. Converta cada action item em ticket no board de engenharia
+2. Priorize com o PM: qual é crítico para prevenir recorrência?
+3. Itens de código: crie ticket e execute como feature delivery normal (ver [feature-delivery.md](./feature-delivery.md))
+4. Itens de processo: documente atualização nos runbooks relevantes
+5. Itens de arquitetura: crie ADR usando [../skills/docs/write-adr/SKILL.md](../skills/docs/write-adr/SKILL.md)
+
+**Output do step**: tickets criados, priorização confirmada com PM
+
+## Exit Criteria
+
+O workflow está concluído quando TODOS os seguintes são verdadeiros:
+- [ ] Serviço em operação normal por pelo menos 24 horas após remediação
+- [ ] Documento de postmortem publicado e revisado por todos os envolvidos
+- [ ] Todos os action items convertidos em tickets com owner e prazo definidos
+- [ ] Stakeholders notificados da resolução final com resumo do postmortem
+- [ ] Timeline do incidente registrada (horário de início, detecção, mitigação, resolução)
+
+## Artifacts
+
+| Artefato | Formato | Localização |
+|----------|---------|-------------|
+| Declaração de incidente | Mensagem no canal de incidentes | Canal Slack/Teams do incidente |
+| Timeline de eventos | Seção no documento de postmortem | `docs/postmortems/{{incident_id}}.md` |
+| Documento de postmortem | Markdown | `docs/postmortems/{{incident_id}}.md` |
+| Hotfix (se aplicável) | PR mergeado | Repositório do serviço afetado |
+| Testes de regressão | Arquivos de teste | Junto ao código corrigido |
+| Action items | Tickets no board | IDs registrados no postmortem |
+| ADR (se aplicável) | Markdown | `docs/architecture/adr-{{N}}.md` |
+
+## Variáveis
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{incident_id}}` | ID único do incidente | `INC-2024-0315` |
+| `{{severidade}}` | Nível P1/P2/P3 | `P1` |
+| `{{sistema_afetado}}` | Nome do serviço ou sistema | `payments-service` |
+
+## Template de Postmortem
+
+```markdown
+# Postmortem: {{incident_id}}
+
+**Severidade**: P[1/2/3]
+**Data**: [YYYY-MM-DD]
+**Duração**: [início] → [resolução] ([N horas N minutos])
+**Impacto**: [N usuários afetados / N% de degradação / descrição]
+**Autores**: [nomes]
+
+## Resumo Executivo
+[2-3 frases: o que aconteceu, por quanto tempo, como foi resolvido]
+
+## Timeline
+
+| Horário | Evento |
+|---------|--------|
+| HH:MM | Alerta disparado |
+| HH:MM | Incidente declarado |
+| HH:MM | Root cause identificado |
+| HH:MM | Remediação aplicada |
+| HH:MM | Serviço estabilizado |
+| HH:MM | Incidente encerrado |
+
+## Root Cause
+[O que causou o incidente — o root cause real, não o sintoma]
+
+## Contributing Factors
+- [fator que permitiu o root cause causar impacto]
+- [fator de processo ou monitoramento que atrasou detecção]
+
+## O que funcionou bem
+- [coisa que ajudou na resposta]
+
+## O que poderia melhorar
+- [coisa que dificultou ou atrasou a resposta]
+
+## Action Items
+
+| # | Ação | Owner | Prazo | Ticket |
+|---|------|-------|-------|--------|
+| 1 | [ação concreta] | [nome] | [data] | [ID] |
+| 2 | [ação concreta] | [nome] | [data] | [ID] |
+```

@@ -14,6 +14,10 @@
 		}
 	},
 
+	"remoteEnv": {
+		"PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
+	},
+
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -26,5 +30,5 @@
 		}
 	},
 
-	"postCreateCommand": "mvn --version && (mvn clean install -DskipTests || true)"
+	"postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && mvn --version && (mvn clean install -DskipTests || true)"
 }

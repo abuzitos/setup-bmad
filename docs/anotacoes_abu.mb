@@ -1,0 +1,5 @@
+## Se o projeto não existe
+vscode ➜ /workspaces $ uvx --from git+https://github.com/github/spec-kit.git specify init setup-spec-kit/
+
+## Se o projeto existe
+vscode ➜ /workspaces/setup-spec-kit (main) $ uvx --from git+https://github.com/github/spec-kit.git specify init .
