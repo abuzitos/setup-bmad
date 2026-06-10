@@ -5,6 +5,7 @@ import com.faculdade.media.dto.ErroDTO;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -38,6 +39,14 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         if (exception instanceof EntidadeNaoEncontradaException) {
             erro.setCodigo("ENTIDADE_NAO_ENCONTRADA");
             erro.setMensagem(exception.getMessage());
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(erro)
+                    .build();
+        }
+
+        if (exception instanceof NotFoundException) {
+            erro.setCodigo("ROTA_NAO_ENCONTRADA");
+            erro.setMensagem("Rota não encontrada.");
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(erro)
                     .build();
