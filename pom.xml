@@ -6,11 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.faculdade</groupId>
-    <artifactId>sistema-calculo-medias</artifactId>
+    <artifactId>cursor-projeto-dojo2</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Sistema de Cálculo de Médias</name>
+    <name>cursor-projeto-dojo2</name>
     <description>Sistema para cálculo de médias de alunos de uma faculdade</description>
 
     <properties>

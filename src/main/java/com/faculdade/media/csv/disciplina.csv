@@ -1,0 +1,11 @@
+id,nome,curso_id,professor_id
+1,Matemática Básica,1,1
+2,Física Geral,1,2
+3,Química Aplicada,1,3
+4,Introdução à Computação,2,4
+5,Estruturas de Dados,2,5
+6,Banco de Dados,2,1
+7,Direito Administrativo,3,6
+8,Gestão Financeira,3,7
+9,Marketing Digital,3,8
+10,Empreendedorismo,3,5

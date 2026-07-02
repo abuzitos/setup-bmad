@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.Application;
  */
 @OpenAPIDefinition(
     info = @Info(
-        title = "Sistema de Cálculo de Médias - API REST",
+        title = "cursor-projeto-dojo2 - API REST",
         version = "1.0.0",
         description = "API REST para gerenciamento de cálculo de médias acadêmicas de alunos de uma faculdade. " +
                      "Permite gestão de cursos, disciplinas, alunos, professores, matrículas e notas, " +
@@ -49,8 +49,11 @@ import jakarta.ws.rs.core.Application;
         @Tag(name = "Disciplinas", description = "Operações relacionadas a disciplinas"),
         @Tag(name = "Alunos", description = "Operações relacionadas a alunos"),
         @Tag(name = "Professores", description = "Operações relacionadas a professores"),
+        @Tag(name = "Instituições", description = "Operações relacionadas a instituições de ensino"),
         @Tag(name = "Matrículas", description = "Operações relacionadas a matrículas de alunos em disciplinas"),
-        @Tag(name = "Notas", description = "Operações relacionadas a notas e cálculo de médias")
+        @Tag(name = "Notas", description = "Operações relacionadas a notas e cálculo de médias"),
+        @Tag(name = "Cursos Profissionalizantes Virtuais", description = "CRUD e lifecycle de ofertas profissionalizantes remotas"),
+        @Tag(name = "Áreas Profissionalizantes", description = "Catálogo somente leitura (seed)")
     }
 )
 @ApplicationPath("/api")

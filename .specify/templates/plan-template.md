@@ -4,7 +4,7 @@
 
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Note**: This template is filled in by the `/speckit-plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
 
 ## Summary
 
@@ -40,7 +40,31 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Reference: `.specify/memory/constitution.md` (cursor-projeto-dojo2 v1.2.0)
+
+| Gate | Principle | Pass Criteria |
+|------|-----------|---------------|
+| G1 | I. Arquitetura em Camadas | Design uses Controller → Service → Repository → Domain; DTOs at HTTP boundary |
+| G2 | II. API REST Contratada | Endpoints under `/api`, JSON, OpenAPI annotations + openapi.yaml sync planned |
+| G3 | III. Test-First | Tests before implementation; Red-Green-Refactor; high-risk scenarios first |
+| G4 | IV. Testes Orientados a Risco | Risk matrix per story/scenario; test types match Alto/Médio/Baixo requirements |
+| G5 | V. Cobertura Proporcional | Coverage targets tied to risk level; low-risk omissions justified |
+| G6 | VI. Simplicidade | No new frameworks/deps without justification; no cosmetic tests for coverage |
+| G7 | Restrições Tecnológicas | Stack stays Java 21 + Jersey + Hibernate + SQLite unless justified |
+| G8 | Fluxo de Desenvolvimento | MVP path with risk assessment before test strategy |
+
+### Risk Assessment (required)
+
+Classify each user story or critical scenario before Phase 1 design:
+
+| Story / Scenario | Risk Level | Rationale | Unit | Integration | Functional |
+|------------------|------------|-----------|------|-------------|------------|
+| [e.g., US1 — calcular média] | Alto | Regra de negócio crítica | MUST | MUST | MUST |
+| [e.g., US2 — listar cursos] | Médio | CRUD read-only | MUST | SHOULD | SHOULD |
+| [e.g., US3 — DTO mapping] | Baixo | Mapeamento trivial | SHOULD | — | — |
+
+**Pre-Phase 0**: All gates MUST pass or have documented exceptions.
+**Post-Phase 1**: Re-check G1, G2, G3, G4 after data-model and contracts; update risk matrix if scope changed.
 
 ## Project Structure
 
@@ -48,12 +72,12 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+├── plan.md              # This file (/speckit-plan command output)
+├── research.md          # Phase 0 output (/speckit-plan command)
+├── data-model.md        # Phase 1 output (/speckit-plan command)
+├── quickstart.md        # Phase 1 output (/speckit-plan command)
+├── contracts/           # Phase 1 output (/speckit-plan command)
+└── tasks.md             # Phase 2 output (/speckit-tasks command - NOT created by /speckit-plan)
 ```
 
 ### Source Code (repository root)

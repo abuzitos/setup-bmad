@@ -103,7 +103,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             Response.status(Response.Status.UNAUTHORIZED)
                 .entity(erro)
                 .type(MediaType.APPLICATION_JSON)
-                .header("WWW-Authenticate", "Basic realm=\"Sistema de Cálculo de Médias\"")
+                .header("WWW-Authenticate", "Basic realm=\"cursor-projeto-dojo2\"")
                 .build()
         );
     }

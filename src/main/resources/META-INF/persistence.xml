@@ -14,6 +14,9 @@
         <class>com.faculdade.media.domain.Disciplina</class>
         <class>com.faculdade.media.domain.Matricula</class>
         <class>com.faculdade.media.domain.Nota</class>
+        <class>com.faculdade.media.domain.Instituicao</class>
+        <class>com.faculdade.media.domain.AreaProfissionalizante</class>
+        <class>com.faculdade.media.domain.CursoProfissionalizanteVirtual</class>
         
         <properties>
             <!-- Database connection -->

@@ -5,6 +5,7 @@ import com.faculdade.media.service.AuthService;
 import com.faculdade.media.service.AuthServiceMock;
 import com.faculdade.media.service.CursoService;
 import com.faculdade.media.service.DisciplinaService;
+import com.faculdade.media.service.InstituicaoService;
 import com.faculdade.media.service.MatriculaService;
 import com.faculdade.media.service.ProfessorService;
 import jakarta.persistence.EntityManager;
@@ -48,6 +49,7 @@ public class JerseyConfig extends ResourceConfig {
                 bind(DisciplinaService.class).to(DisciplinaService.class);
                 bind(AlunoService.class).to(AlunoService.class);
                 bind(ProfessorService.class).to(ProfessorService.class);
+                bind(InstituicaoService.class).to(InstituicaoService.class);
                 bind(MatriculaService.class).to(MatriculaService.class);
                 bind(AuthServiceMock.class).to(AuthService.class);
             }

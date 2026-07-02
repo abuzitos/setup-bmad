@@ -19,7 +19,7 @@ public class Main {
             HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
                     URI.create(BASE_URI), config, true);
 
-            System.out.println("Sistema de Cálculo de Médias iniciado.");
+            System.out.println("cursor-projeto-dojo2 iniciado.");
             System.out.println("API REST disponível em: http://localhost:8080/api");
             System.out.println("Swagger UI: http://localhost:8080/api/swagger-ui");
             System.out.println("Pressione Ctrl+C para encerrar.");

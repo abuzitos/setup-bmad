@@ -1,0 +1,54 @@
+{
+    "alunos": [
+        {
+            "nome": "João da Silva",
+            "matricula": "123456",
+            "media": 8.5
+        },
+        {
+            "nome": "Maria Oliveira",
+            "matricula": "123457",
+            "media": 9.0
+        },
+        {
+            "nome": "Pedro Santos",
+            "matricula": "123458",
+            "media": 7.5
+        },
+        {
+            "nome": "Ana Paula",
+            "matricula": "123459",
+            "media": 8.0
+        },
+        {
+            "nome": "Carlos Oliveira",
+            "matricula": "123460",
+            "media": 7.0
+        },
+        {
+            "nome": "Lucas Santos",
+            "matricula": "123461",
+            "media": 6.8
+        },
+        {
+            "nome": "Mariana Oliveira",
+            "matricula": "123462",
+            "media": 8.9
+        },
+        {
+            "nome": "Pedro Santos",
+            "matricula": "123463",
+            "media": 7.7
+        },
+        {
+            "nome": "Ana Paula",
+            "matricula": "123464",
+            "media": 8.2
+        },
+        {
+            "nome": "Carlos Oliveira",
+            "matricula": "123465",
+            "media": 7.3
+        }
+    ]
+}

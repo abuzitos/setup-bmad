@@ -1,4 +1,4 @@
-# Estrutura de Testes - Sistema de Cálculo de Médias
+# Estrutura de Testes - cursor-projeto-dojo2
 
 Este documento descreve a estrutura de testes configurada no projeto, seguindo as melhores práticas e o protocolo BMAD.
 

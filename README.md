@@ -1,4 +1,4 @@
-# Sistema de Cálculo de Médias
+# cursor-projeto-dojo2
 
 ## Compilação
 
@@ -10,7 +10,7 @@ mvn clean compile
 
 ```bash
 mvn clean package
-java -jar target/sistema-calculo-medias-1.0.0-SNAPSHOT.jar
+java -jar target/cursor-projeto-dojo2-1.0.0-SNAPSHOT.jar
 ```
 
 ## URLs

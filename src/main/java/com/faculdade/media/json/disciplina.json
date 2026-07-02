@@ -1,0 +1,124 @@
+{
+  "disciplinas": [
+    {
+      "nome": "Matemática Básica",
+      "curso": {
+        "id": 1,
+        "nome": "Engenharia"
+      },
+      "professor": {
+        "id": 1,
+        "nome": "Dr. André Silva",
+        "registro": "P001"
+      }
+    },
+    {
+      "nome": "Física Geral",
+      "curso": {
+        "id": 1,
+        "nome": "Engenharia"
+      },
+      "professor": {
+        "id": 2,
+        "nome": "Profa. Mariana Lima",
+        "registro": "P002"
+      }
+    },
+    {
+      "nome": "Química Aplicada",
+      "curso": {
+        "id": 1,
+        "nome": "Engenharia"
+      },
+      "professor": {
+        "id": 3,
+        "nome": "Dr. Sérgio Souza",
+        "registro": "P003"
+      }
+    },
+    {
+      "nome": "Introdução à Computação",
+      "curso": {
+        "id": 2,
+        "nome": "Ciência da Computação"
+      },
+      "professor": {
+        "id": 4,
+        "nome": "Profa. Carla Torres",
+        "registro": "P004"
+      }
+    },
+    {
+      "nome": "Estruturas de Dados",
+      "curso": {
+        "id": 2,
+        "nome": "Ciência da Computação"
+      },
+      "professor": {
+        "id": 5,
+        "nome": "Dr. Bruno Alves",
+        "registro": "P005"
+      }
+    },
+    {
+      "nome": "Banco de Dados",
+      "curso": {
+        "id": 2,
+        "nome": "Ciência da Computação"
+      },
+      "professor": {
+        "id": 1,
+        "nome": "Dr. André Silva",
+        "registro": "P001"
+      }
+    },
+    {
+      "nome": "Direito Administrativo",
+      "curso": {
+        "id": 3,
+        "nome": "Administração"
+      },
+      "professor": {
+        "id": 6,
+        "nome": "Profa. Juliana Freitas",
+        "registro": "P006"
+      }
+    },
+    {
+      "nome": "Gestão Financeira",
+      "curso": {
+        "id": 3,
+        "nome": "Administração"
+      },
+      "professor": {
+        "id": 7,
+        "nome": "Dr. Roberto Pereira",
+        "registro": "P007"
+      }
+    },
+    {
+      "nome": "Marketing Digital",
+      "curso": {
+        "id": 3,
+        "nome": "Administração"
+      },
+      "professor": {
+        "id": 8,
+        "nome": "Profa. Camila Mendes",
+        "registro": "P008"
+      }
+    },
+    {
+      "nome": "Empreendedorismo",
+      "curso": {
+        "id": 3,
+        "nome": "Administração"
+      },
+      "professor": {
+        "id": 5,
+        "nome": "Dr. Bruno Alves",
+        "registro": "P005"
+      }
+    }
+  ]
+}

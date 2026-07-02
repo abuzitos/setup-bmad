@@ -77,6 +77,15 @@ public class AlunoService {
     }
     
     /**
+     * Lista todos os alunos ordenados por nome.
+     *
+     * @return Lista de DTOs dos alunos ordenados por nome
+     */
+    public List<AlunoDTO> ordenarPorNome() {
+        return listarTodos();
+    }
+    
+    /**
      * Atualiza um aluno existente.
      * 
      * @param id O ID do aluno a ser atualizado

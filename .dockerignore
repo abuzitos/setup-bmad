@@ -1,0 +1,9 @@
+.git
+.github
+.cursor
+.devcontainer
+target
+*.md
+!src/test/java/**/README.md
+.env
+*.db
